@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_profiles', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unique();
-            $table->string('city');
-            $table->bigInteger('country_id');
-            $table->string('photo',255);
-            $table->string('phone',255);
+            $table->string('code',2);
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_profiles');
+        Schema::dropIfExists('countries');
     }
 };

@@ -13,8 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->bigInteger('user_id')->after('id');
+        Schema::create('pages', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('parent_id');
+            $table->string('title',100);
+            $table->text('content');
+            $table->bigInteger('category_id');
+            $table->string('thumbnail',255)->nullable();
+            $table->timestamps();
         });
     }
 
@@ -25,8 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('pages');
     }
 };
