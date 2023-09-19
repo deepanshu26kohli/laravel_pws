@@ -37,13 +37,20 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-       $category = new Category();
-       $category->title = $request->title;
-       $category->content = $request->content;
-       $save = $category->save();
-       if($save){
+        $category = new Category();
+        $category->title = $request->title;
+        $category->content = $request->content;
+        $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
+        if($request->hasFile('thumbnail'))
+                $filename =  $request->file('thumbnail')->storeAs('images',$filename,'public');
+        else
+                $filename = null;
+        $category->thumbnail = $filename;
+        $category->parent_id = $request->parent_id; 
+        $save = $category->save();
+        if($save){
         return redirect()->route('categories.index');
-       }
+        }
     }
 
     /**
@@ -52,9 +59,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($id)
     {
-        //
+        $category = Category::find($id);
+        if(!$category){
+            return back();
+        }
+ 
+        return view('dashboard.categories.show',compact('category')); 
     }
 
     /**
@@ -65,7 +77,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+       $categories = Category::where('id','<>',$category->id)->get(); 
+       return view("dashboard.categories.edit",compact('category','categories'));
     }
 
     /**
@@ -76,8 +89,22 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Category $category)
-    {
-        //
+    { 
+        // dd($request->parent_id);
+        $category->title = $request->title;
+        $category->content = $request->content;
+        $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
+        if($request->hasFile('thumbnail'))
+                $filename =  $request->file('thumbnail')->storeAs('images',$filename,'public');
+        else
+               $filename = 'images/dummy.jpg';
+
+        $category->thumbnail = $filename;
+        $category->parent_id = $request->parent_id; 
+        $save = $category->save();
+        if($save){
+        return redirect()->route('categories.index');
+        }
     }
 
     /**
@@ -88,6 +115,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+       $category->delete();
+       return redirect()->route('categories.index');
     }
 }

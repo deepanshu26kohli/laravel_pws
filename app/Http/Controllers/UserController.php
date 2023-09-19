@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+
 class UserController extends Controller
 {
     /**
@@ -13,7 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = \App\Models\User::with(['roles','profile'])->get();
+        return view('dashboard.users.index',compact('users'));
     }
 
     /**
@@ -23,7 +25,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = \App\Models\Role::all();
+        $countries = \App\Models\Country::all();
+        return view('dashboard.users.create',compact('countries','roles'));
     }
 
     /**
@@ -34,7 +38,32 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = [
+               'username' => $request->username,
+               'name' => $request->name,
+               'email' => $request->email,
+               'password' => bcrypt($request->password),
+        ];
+        $user = \App\Models\User::create($user);
+        $filename = sprintf('thumbnail_%s.jpg',random_int(1,1000));
+        if($request->hasFile('photo'))
+                $filename =  $request->file('photo')->storeAs('profiles',$filename,'public');
+        else
+                $filename = "profiles/dummy.jpg";
+        if($user){
+            $profile = new \App\Models\UserProfile(
+                [
+                    'user_id' => $user->id,
+                    'city' => $request->city,
+                    'country_id' => $request->country_id,
+                    'photo' => $filename,
+                    'phone' => $request->phone 
+                ]);
+                $user->profile()->save($profile);
+                $user->roles()->attach($request->roles);
+                return redirect()->route('users.index');
+        }
+
     }
 
     /**

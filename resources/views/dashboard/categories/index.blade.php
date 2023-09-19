@@ -29,10 +29,18 @@
             <tr>
                 <td>{{$category->id}}</td>
                 <td>{{$category->title}}</td>
-                <td><img src="{{storage($category->thumbnail)}}"/></td>
+                <td><img style="height:10vh; width:10vh" src="{{asset("storage/".$category->thumbnail)}}"/></td>
                 <td>{{$category->created_at}}</td>
                 <td>{{$category->updated_at}}</td>
-                <td>{{$category->children}}</td>
+                <td>
+                  @if(!$category->children->isEmpty())
+                    @foreach ($category->children as $children)
+                     {{$category->title}}
+                    @endforeach
+                  @else
+                  {{'Parent Category'}}
+                  @endif
+                </td>
                 <td>
                     <a href="{{route('categories.show',$category->id)}} ">Show</a> |
                     <form action="{{route('categories.destroy',$category->id)}}" method="post">
