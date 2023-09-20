@@ -51,4 +51,12 @@ class User extends Authenticatable
     public function roles(){
         return $this->belongsToMany(Role::class,'role_user','user_id','role_id');
     }
+    public function setUsernameAttribute($username){
+        $username = trim(preg_replace("/[^\w\d]+/i","-",$username),"-");
+        $count = User::where('username','like',"%{$username}%")->count();
+        if($count>0){
+            $username = $username."-".($count+1);
+        }
+        $this->attributes['username'] = strtolower($username);
+    }
 }

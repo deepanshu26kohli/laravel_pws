@@ -233,9 +233,19 @@
       </button>
     </li>
   </ul>
+  <form action="{{ route('logout') }}" method="POST">
+  @csrf
+    {{-- <a class="" href="{{ route('logout') }}">
+      
+        {{ __('Logout') }}
+    </a> --}}
+    <button class="submit">  {{ __('Logout') }}</button>
 
+  </form>
+ 
   <div id="navbarSearch" class="navbar-search w-100 collapse">
     <input class="form-control w-100 rounded-0 border-0" type="text" placeholder="Search" aria-label="Search">
+   
   </div>
 </header>
 

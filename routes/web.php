@@ -21,7 +21,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 //Roles Controller for CMS
-Route::prefix('admin')->group(function(){
+Route::prefix('admin')->middleware('auth')->group(function(){
     Route::view('','dashboard.admin');
     Route::resource('profiles',UserProfileController::class);
     Route::resource('users',UserController::class);
